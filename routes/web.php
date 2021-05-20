@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+// use Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +16,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+  return view('welcome');
+});
+
+Route::get('download/{size}', function ($size = 'small') {
+  $filename = "{$size}.pdf";
+  $file = base64_encode(Storage::get($filename));
+
+  return response()->streamDownload(function () use ($file) {
+    echo base64_decode($file);
+  }, $filename);
 });
